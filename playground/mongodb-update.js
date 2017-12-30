@@ -30,7 +30,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',(err,client)=>{
         },
         // increment age value by one
         $inc:{
-            age:1
+            age:1existing
         }
     },{
         returnOriginal:false
