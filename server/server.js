@@ -1,24 +1,38 @@
-const mongoose=require('mongoose');
-mongoose.Promise=global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+const express=require('express');
+const bodyParser=require('body-parser');
+const {mongoose}=require('./db/mongoos.js');
 
-const Todo=mongoose.model('Todo',{
-    text:{
-        type:String
-    },
-    completed:{
-        type:Boolean
-    },
-    completedAt:{
-        type:Number
-    }
+const {Todo}=require('./models/todo.js');
+const {User}=require('./models/user.js');
+
+const app= express();
+
+// use 3rd party for parse json from request body
+app.use(bodyParser.json());
+
+/**
+ * add totod
+ * url post server.js/todos
+ */
+app.post('/todos',(req,res)=>{
+    var todo=new Todo({
+        text:req.body.text
+    });
+
+    todo.save().then((doc)=>{
+        res.send(doc);
+    },(e)=>{
+        res.status(400).send(e);
+    });
 });
 
-var newTodo=new Todo({
-    text:'Cook dinner'
+/**
+ * get todo(s) detail
+ */
+app.get('/todos',(req,res)=>{
+    var todo=new Todo();
 });
-newTodo.save().then((doc)=>{
-    console.log('Save todo',doc)
-},(e)=>{
-    console.log('Unable to save todo');
+
+app.listen(3000,()=>{
+
 });
