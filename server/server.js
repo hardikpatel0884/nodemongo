@@ -2,6 +2,7 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const {mongoose}=require('./db/mongoos.js');
 const {ObjectID}=require('mongodb');
+const _=require('lodash');
 
 const {Todo}=require('./models/todo.js');
 const {User}=require('./models/user.js');
@@ -62,6 +63,32 @@ app.delete('/todos/:id',(req,res)=>{
             doc?res.send(doc):res.send('Document Not Found');
         },(e)=>{res.send(e)});
     }else{res.status(400).send("Ghare ja");}
+});
+
+/**
+ * update todos
+ * PATCH /todos
+ */
+app.patch('/todos/:id',(req,res)=>{
+    var id= req.params.id;
+    var body=_.pick(req.body,['text','completed']);
+    if(!ObjectID.isValid(id)){
+        res.status(400).send("Ghare ja");
+    }
+
+    if(_.isBoolean(body.completed)&&body.completed){
+        body.completedAt=new Date().getTime();
+    }else{
+        body.completed=false;
+        body.completedAt=null;
+    }
+
+    Todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((result)=>{
+        if(!result){
+            res.status(400).send('not find');
+        }
+        res.status(200).send({result})
+    },(e)=>{res.status(400).send('opps',e)})
 });
 
 app.listen(3000,()=>{
