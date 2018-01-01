@@ -1,6 +1,7 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 const {mongoose}=require('./db/mongoos.js');
+const {ObjectID}=require('mongodb');
 
 const {Todo}=require('./models/todo.js');
 const {User}=require('./models/user.js');
@@ -12,12 +13,12 @@ app.use(bodyParser.json());
 
 /**
  * add totod
- * url post server.js/todos
+ * POST /todos
  */
 app.post('/todos',(req,res)=>{
     var todo=new Todo({
         text:req.body.text
-    });
+    });req.params
 
     todo.save().then((doc)=>{
         res.send(doc);
@@ -28,9 +29,39 @@ app.post('/todos',(req,res)=>{
 
 /**
  * get todo(s) detail
+ * GET /todos
  */
 app.get('/todos',(req,res)=>{
-    var todo=new Todo();
+    
+    Todo.find().then((todos)=>{
+        res.status(200).send({todos});
+    },(e)=>{
+        res.status(400).send(e);
+    });
+});
+
+/**
+ * get sinle detail
+ * GET /todos/12345
+ */
+app.get('/todos/:id',(req,res)=>{
+    var id= req.params.id;
+    if(ObjectID.isValid(id)){
+        Todo.findById({_id:id}).then((doc)=>{res.send(doc)},(e)=>{res.send(e)});
+    }else{res.status(400).send("Ghare ja");}    
+});
+
+/**
+ * delete todo
+ * DELETE /todos/12345
+ */
+app.delete('/todos/:id',(req,res)=>{
+    var id= req.params.id;
+    if(ObjectID.isValid(id)){
+        Todo.findByIdAndRemove({_id:id}).then((doc)=>{
+            doc?res.send(doc):res.send('Document Not Found');
+        },(e)=>{res.send(e)});
+    }else{res.status(400).send("Ghare ja");}
 });
 
 app.listen(3000,()=>{
