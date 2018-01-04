@@ -1,6 +1,6 @@
 const express=require('express');
 const bodyParser=require('body-parser');
-const {mongoose}=require('./db/mongoos.js');
+// const {mongoose}=require('./db/mongoos.js');
 const {ObjectID}=require('mongodb');
 const _=require('lodash');
 
@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.post('/todos',(req,res)=>{
     var todo=new Todo({
         text:req.body.text
-    });req.params
+    });
 
     todo.save().then((doc)=>{
         res.send(doc);
@@ -90,6 +90,11 @@ app.patch('/todos/:id',(req,res)=>{
         res.status(200).send({result})
     },(e)=>{res.status(400).send('opps',e)})
 });
+
+
+/**
+ * User section
+ * */
 
 app.listen(3000,()=>{
 
