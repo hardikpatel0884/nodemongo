@@ -9,21 +9,29 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',(err,client)=>{
     const db=client.db("TodoApp");
 
     //fetch records .find({key:value})
-   db.collection('Todo').find().toArray().then((docs)=>{
+    db.collection('Todos').find({})
+    db.collection('Todos').find({},{projection:{text:1}}).toArray().then((docs)=>{
         console.log('Todos');
         console.log(JSON.stringify(docs,undefined,2));
-   },(err)=>{
-       console.log('Unable to fetch todos ',err);
-   });
+    },(err)=>{
+        console.log('Unable to fetch todos ',err);
+    });
+    /*
+    db.collection('Todos').find({completed:true},{text:0}).toArray().then((docs)=>{
+        console.log('Todos');
+        console.log(JSON.stringify(docs,undefined,2));
+    },(err)=>{
+        console.log('Unable to fetch todos ',err);
+    });*/
 
     //getting count of records
     // db.collection('Todos').find().count().then((count)=>{
     //     console.log(`${count} found`);
-        
+
     // },(err)=>{
     // console.log('Unable to fetch todos ',err);
     // });
 
 
-   client.close();
+    client.close();
 });
